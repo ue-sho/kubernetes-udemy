@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: entrypoint
+  namespace: default
+  annotations:
+    spec.ingressClassName: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  labels:
+    app: weblog
+    type: entrypoint
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-svc
+            port:
+              number: 80
