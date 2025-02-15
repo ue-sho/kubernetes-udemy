@@ -134,3 +134,29 @@ use weblog
 show collections
 db.posts.find().pretty()
 ```
+
+## Appサーバー動作確認
+
+
+```bash
+cd apps/weblog-app
+kubectl apply -f weblog-db-service.yml
+
+# Hosts は minikube ip で取得したIPアドレス
+docker run \
+    -e MONGODB_USERNAME="user" \
+    -e MONGODB_PASSWORD="welcome" \
+    -e MONGODB_HOSTS="192.168.49.2:32717" \
+    -e MONGODB_DATABASE="weblog" \
+    -d \
+    -p 8080:3000 \
+    weblog-app:v1.0.0
+```
+
+WSL上で動かしているので、socatでポートフォワーディングする。
+
+```bash
+socat TCP-LISTEN:8080,fork TCP:192.168.49.2:8080
+```
+
+ブラウザで `http://localhost:8080` にアクセスすると確認できた。
