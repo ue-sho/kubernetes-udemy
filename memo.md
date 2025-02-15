@@ -68,11 +68,69 @@ kubectl get pods -f example/pod.yaml
 kubectl create secret generic my-secret --from-literal=username=admin --from-literal=password=password
 ```
 
-
 ## Minikube
 
-`--vm-driver=none` でホストのDockerを使うようになる。
+ローカル環境でKubernetesクラスタを構築する。
 
 ```bash
-minikube start --vm-driver=none
+minikube start
+```
+
+SSHで接続する。
+
+```bash
+minikube ssh
+```
+
+IPアドレスを取得する。
+
+```bash
+minikube ip
+```
+
+MinikubeのDockerデーモンに接続する。
+
+```bash
+eval $(minikube docker-env)
+```
+
+## DB初期化
+
+MongoDBのレプリカセットを初期化する。
+
+```
+use admin
+db.auth("admin", "P@ssw0rd")
+rs.initiate({
+    _id: "rs0",
+    members: [
+        { _id: 0, host: "mongo-0.db-svc:27017" },
+        { _id: 1, host: "mongo-1.db-svc:27017" },
+        { _id: 2, host: "mongo-2.db-svc:27017" }
+    ]
+})
+rs.status()
+```
+
+Debug PodからDBに初期データを投入する。
+
+```bash
+cd init
+kubectl cp init/. debug:/root/init-db/
+kubectl exec -it debug -- bash
+cd /root/init-db
+sh init.sh
+```
+
+データを確認してみる。
+
+```sh
+mongosh mongo-0.db-svc
+```
+```
+use admin
+db.auth("admin", "P@ssw0rd")
+use weblog
+show collections
+db.posts.find().pretty()
 ```
