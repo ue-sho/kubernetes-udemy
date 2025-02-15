@@ -153,8 +153,9 @@ show collections
 db.posts.find().pretty()
 ```
 
-## Appサーバー動作確認
+## weblog-app 動作確認
 
+「64. APサーバーイメージ作成」を見ながら確認。
 
 ```bash
 cd apps/weblog-app
@@ -178,3 +179,25 @@ socat TCP-LISTEN:8080,fork TCP:192.168.49.2:8080
 ```
 
 ブラウザで `http://localhost:8080` にアクセスすると確認できた。
+
+## weblog-web 動作確認
+
+「68. WEBサーバーイメージ作成」を見ながら確認。
+
+```bash
+cd apps/weblog-web
+kubectl apply -f weblog-app-service.yml
+
+# Hosts は minikube ip で取得したIPアドレス
+docker run \
+    -e APPLICATION_HOST="192.168.49.2:30000" \
+    -p 8080:80 \
+    -d \
+    weblog-web:v1.0.0
+```
+
+WSL上で動かしているので、socatでポートフォワーディングする。
+
+```bash
+socat TCP-LISTEN:8080,fork TCP:192.168.49.2:8080
+```
