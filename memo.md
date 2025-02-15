@@ -68,6 +68,24 @@ kubectl get pods -f example/pod.yaml
 kubectl create secret generic my-secret --from-literal=username=admin --from-literal=password=password
 ```
 
+`kubectl get secret` でシークレットを取得する。
+
+```bash
+kubectl get secret my-secret -o yaml
+```
+
+`kubectl describe` でリソースの詳細を取得する。
+
+```bash
+kubectl describe pod hello-world
+```
+
+`kubectl logs` でログを取得する。
+
+```bash
+kubectl logs hello-world
+```
+
 ## Minikube
 
 ローカル環境でKubernetesクラスタを構築する。
